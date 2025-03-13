@@ -21,11 +21,10 @@ const header = [
   "compare_得意業界",
 ];
 
-fs.writeFileSync("hikaku-biz.csv", header.join(", "));
+const csv = [header.join(",")];
 
 for (const index of new Array(100).keys()) {
   console.log(`page: ${index * 10}`);
-  const csv = [];
   await fetch(`https://www.biz.ne.jp/list/web-system/?datacnt=${index * 10}`)
   .then((res) => res.text())
   .then((body) => {
@@ -60,11 +59,13 @@ for (const index of new Array(100).keys()) {
         .innerText.replaceAll("\n", " ")
         .trim();
       }
+
       const resultMap = {name, url, ...saiten, jisseki, ...compare};
       const row = header.map((key) => resultMap[key]);
       csv.push(row.join(","));
     }
   });
-  fs.appendFileSync("hikaku-biz.csv", csv.join("\n"));
+  console.log(csv.length);
   await sleep(randomInt(1000, 3000));
 }
+fs.writeFileSync("hikaku-biz.csv", csv.join("\n"));
